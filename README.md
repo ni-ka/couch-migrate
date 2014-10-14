@@ -12,7 +12,10 @@ var couchMigrate = require('couch-migrate');
 couchMigrate({
   database: nanoDb,
 
-  // Source view query information.
+  // Optional. Source view query information.
+  // If not present, _all_docs will be used as source. 
+  // In that case you might want to set sourceParams to 
+  // {include_docs: true} to return the documents as row.doc
   sourceDesignDoc: 'migrations',
   sourceView: 'user_migration1',
   sourceParams: {group: true},

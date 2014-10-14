@@ -225,7 +225,8 @@ function getViewInBatches(db, ddoc, view, params, batchSize, batchHandler, cb) {
   params.limit = batchSize + 1;
 
   (function nextBatch() {
-    db.view(ddoc, view, params, function(err, body) {
+
+    function batchCallback(err, body) {
       if (err) { return cb(err); }
 
       batchHandler(body.rows.slice(0, batchSize), function(err) {
@@ -242,7 +243,15 @@ function getViewInBatches(db, ddoc, view, params, batchSize, batchHandler, cb) {
           cb();
         }
       });
-    });
+    }
+
+    // if no view provided, use all documents
+    if (ddoc && view)
+      db.view(ddoc, view, params, batchCallback);
+    else {
+      db.list(params, batchCallback);
+    }
+
   })();
 }
 
